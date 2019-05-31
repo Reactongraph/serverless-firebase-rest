@@ -1,29 +1,23 @@
-const functions = require('firebase-functions');
+import functions from 'firebase-functions'
 const admin = require('firebase-admin');
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
-var firebaseConfig = {
-    apiKey: "AIzaSyDAC1npbkyBn3dpbDsuBHpBfRGWotWr6XA",
-    authDomain: "pwa-rest-serverless.firebaseapp.com",
-    databaseURL: "https://pwa-rest-serverless.firebaseio.com",
-    projectId: "pwa-rest-serverless",
-    storageBucket: "pwa-rest-serverless.appspot.com",
-    messagingSenderId: "135931728044",
-    appId: "1:135931728044:web:e07b8f1ad8d831f2"
-  };
-  // Initialize Firebase
-admin.initializeApp(firebaseConfig);
 
-admin.initializeApp(functions.config().firebase);
+// admin.initializeApp(functions.config().firebase);
+var serviceAccount = require("./serviceAccountKey");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://pwa-rest.firebaseio.com"
+});
 
 var db = admin.firestore();
 const app = express();
 
 // Automatically allow cross-origin requests
 app.use(cors({ origin: true }));
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 // // Create and Deploy Your First Cloud Functions
@@ -31,29 +25,36 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //
 app.get('/contacts', (req, res) => {
     console.log(">>>>>>>>>>>>>>>.hello Rohit>>>>>>>>>>>>>>>>>>>")
+    var docRef = db.collection('users').doc('alovelace');
+
+    var setAda = docRef.set({
+    first: 'Ada',
+    last: 'Lovelace',
+    born: 1815
+    });
     // var getContacts = db.collection('contacts');
-    db.collection('contacts').then(doc => {
-    if (!doc.exists) {
-      console.log('No such document!');
-    } else {
-      console.log('Document data:', doc.data());
-    }
-  })
-  .catch(err => {
-    console.log('Error getting document', err);
-  });
+//     db.collection('contacts').then(doc => {
+//     if (!doc.exists) {
+//       console.log('No such document!');
+//     } else {
+//       console.log('Document data:', doc.data());
+//     }
+//   })
+//   .catch(err => {
+//     console.log('Error getting document', err);
+//   });
     res.send("Hello Rohit");
 })
 
 app.post('/contacts', (req, res) => {
     console.log(Object.keys(req.body))
-    db.collection('contacts').add({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-      }).then(ref => {
-        console.log('Added document with ID: ', ref.id);
-        res.send(ref)
-      }).catch((err)=>res.send(err));
+    // db.collection('contacts').add({
+    //     firstName: req.body.firstName,
+    //     lastName: req.body.lastName,
+    //   }).then(ref => {
+    //     console.log('Added document with ID: ', ref.id);
+    //     res.send(ref)
+    //   }).catch((err)=>res.send(err));
 })
 
 // webApi is your functions name, and you will pass main as 
