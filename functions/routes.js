@@ -3,7 +3,7 @@ var user = require('./controllers/user')
 
 var router = express.Router()
 
-router.use('/user',db,user)
+router.use('/user',user)
 
 
 module.exports = router

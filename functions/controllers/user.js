@@ -1,9 +1,8 @@
+const firebaseAdmin = require('../config/firebaseAdmin')
 var express = require('express')
-const admin = require('firebase-admin');
 var router = express.Router()
 
-
-var db = admin.firestore();
+var db = firebaseAdmin.firestore();
 //get All Users
 router.get('/getUsers', (req, res) => {
     db.collection('users').get().then(snapshot => {
@@ -22,13 +21,13 @@ router.post('/getUserById',(req,res)=>{
 db.collection('users').doc(req.body.id).get()
       .then(doc => {
         if (!doc.exists) {
-          console.log('No such document!');
+          res.json({"message":"No such document!"});
         } else {
-          console.log('Document data:', doc.data());
+            res.json({"data":doc.data()});
         }
       })
       .catch(err => {
-        console.log('Error getting document', err);
+        res.send(err)
       });
     
 })
